@@ -1,0 +1,492 @@
+<html><head><base href="https://interactive-html-learning.com/" target="_blank">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive HTML Learning App</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary-color: #0077B6;
+        --secondary-color: #0077B6;
+        --background-color: #ffffff;  
+        --text-color: #000000;       
+        --accent-color: #0077B6;     
+
+        --dark-primary-color: #00B4D8;
+        --dark-secondary-color: #0096C7;
+        --dark-background-color: #000000;
+        --dark-text-color: #ADE8F4;
+        --dark-accent-color: #48CAE4;
+    }
+    body {
+        font-family: 'Outfit', sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background-color: var(--background-color);
+        color: var(--text-color);
+    }
+    h1, h2 {
+        font-family: 'Outfit', sans-serif;
+        color: var(--primary-color);
+        font-weight: 600;
+    }
+    .app-header {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+    }
+    .app-header h1 {
+        margin: 0;
+        color: white;
+        font-weight: 700;
+        font-size: 2.2rem;
+    }
+    .main-content {
+        display: flex;
+        flex-direction: column;
+        margin-top: 30px;
+    }
+    .editor-section {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 30px;
+        align-items: stretch;
+    }
+    .editor-container, .output-container {
+        width: 50%; 
+        padding: 0 10px; 
+    }
+    .flowchart-container {
+        width: 60%; 
+        margin: 0 auto 30px;
+    }
+    @media (min-width: 768px) {
+        .editor-container, .output-container {
+            width: 48%;
+        }
+    }
+    svg {
+        width: 100%;
+        height: 300px; 
+        border: 1px solid var(--accent-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    rect {
+        fill: var(--secondary-color);
+        stroke: var(--primary-color);
+        stroke-width: 2;
+        cursor: pointer;
+        transition: fill 0.3s ease;
+    }
+    rect:hover {
+        fill: var(--primary-color);
+    }
+    text {
+        font-size: 14px;
+        fill: white;
+        text-anchor: middle;
+        dominant-baseline: central;
+        pointer-events: none;
+    }
+    line {
+        stroke: var(--accent-color);
+        stroke-width: 2;
+    }
+    #editor, #output {
+        width: 100%;
+        height: 450px;  
+        border: 1px solid var(--accent-color);
+        border-radius: 8px;
+        margin-top: 10px;
+        background-color: white;
+    }
+    #editor {
+        font-family: 'Courier New', Courier, monospace; 
+        padding: 10px;
+        box-sizing: border-box;
+        resize: none; 
+        height: 450px; 
+    }
+    #scenario-selector {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid var(--accent-color);
+        border-radius: 4px;
+        background-color: white;
+        color: var(--text-color);
+    }
+    button {
+        margin-top: 10px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+    button:hover {
+        background-color: #0077B6;
+    }
+
+    .theme-toggle {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: 2px solid #ADE8F4;
+        border-radius: 20px;
+        padding: 5px 15px;
+        color: white;
+        cursor: pointer;
+        font-family: 'Outfit', sans-serif;
+        transition: all 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+        background-color: rgba(144, 224, 239, 0.1);
+    }
+
+    [data-theme="dark"] body {
+        background-color: var(--dark-background-color);
+        color: var(--dark-text-color);
+    }
+
+    [data-theme="dark"] h1, 
+    [data-theme="dark"] h2 {
+        color: var(--dark-primary-color);
+    }
+    
+    [data-theme="dark"] .app-header {
+        background-color: #121212; 
+    }
+
+    [data-theme="dark"] .app-header h1 {
+        color: var(--dark-text-color);
+    }
+
+    [data-theme="dark"] #editor,
+    [data-theme="dark"] #scenario-selector {
+        background-color: #121212; 
+        color: #ADE8F4;
+        border-color: var(--dark-accent-color);
+    }
+
+    svg {
+        width: 100%;
+        height: 300px;
+        border: 1px solid var(--accent-color);
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    #flowchart rect:first-child {
+        fill: none;
+    }
+
+    [data-theme="dark"] #flowchart rect:not(:first-child) {
+        fill: var(--dark-secondary-color);
+        stroke: var(--dark-primary-color);
+    }
+
+    [data-theme="dark"] #flowchart text {
+        fill: var(--dark-text-color);
+    }
+</style>
+</head>
+<body>
+    <header class="app-header">
+        <h1>Interactive HTML Learning App</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <span class="theme-label">🌙</span>
+        </button>
+    </header>
+    
+    <div class="container">
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="editor-container">
+                    <h2>HTML Code Editor</h2>
+                    <select id="scenario-selector">
+                        <option value="basic">Basic Structure</option>
+                        <option value="article">Article Page</option>
+                        <option value="portfolio">Portfolio Page</option>
+                    </select>
+                    <textarea id="editor"></textarea>
+                    <button onclick="runCode()">Run</button>
+                </div>
+                <div class="output-container">
+                    <h2>Output Preview</h2>
+                    <iframe id="output"></iframe>
+                </div>
+            </div>
+            
+            <div class="flowchart-container">
+                <h2>HTML Structure Flowchart</h2>
+                <svg id="flowchart" viewBox="0 0 800 600">
+                    <defs>
+                        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#0077B6;stop-opacity:1"></stop>
+                            <stop offset="100%" style="stop-color:#0077B6;stop-opacity:0.8"></stop>
+                        </linearGradient>
+                    </defs>
+                    <rect width="100%" height="100%" fill="none"></rect>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const flowchartData = {
+        basic: [
+            {id: 'html', label: 'HTML', x: 350, y: 50, width: 100, height: 40},
+            {id: 'head', label: 'HEAD', x: 250, y: 150, width: 100, height: 40},
+            {id: 'body', label: 'BODY', x: 450, y: 150, width: 100, height: 40},
+            {id: 'title', label: 'TITLE', x: 250, y: 250, width: 100, height: 40},
+            {id: 'header', label: 'HEADER', x: 350, y: 250, width: 100, height: 40},
+            {id: 'main', label: 'MAIN', x: 450, y: 250, width: 100, height: 40}
+        ],
+        article: [
+            {id: 'html', label: 'HTML', x: 350, y: 50, width: 100, height: 40},
+            {id: 'head', label: 'HEAD', x: 250, y: 150, width: 100, height: 40},
+            {id: 'body', label: 'BODY', x: 450, y: 150, width: 100, height: 40},
+            {id: 'title', label: 'TITLE', x: 250, y: 250, width: 100, height: 40},
+            {id: 'header', label: 'HEADER', x: 350, y: 250, width: 100, height: 40},
+            {id: 'nav', label: 'NAV', x: 350, y: 350, width: 100, height: 40},
+            {id: 'main', label: 'MAIN', x: 450, y: 250, width: 100, height: 40},
+            {id: 'article', label: 'ARTICLE', x: 450, y: 350, width: 100, height: 40},
+            {id: 'aside', label: 'ASIDE', x: 550, y: 350, width: 100, height: 40}
+        ],
+        portfolio: [
+            {id: 'html', label: 'HTML', x: 350, y: 50, width: 100, height: 40},
+            {id: 'head', label: 'HEAD', x: 250, y: 150, width: 100, height: 40},
+            {id: 'body', label: 'BODY', x: 450, y: 150, width: 100, height: 40},
+            {id: 'title', label: 'TITLE', x: 250, y: 250, width: 100, height: 40},
+            {id: 'header', label: 'HEADER', x: 350, y: 250, width: 100, height: 40},
+            {id: 'nav', label: 'NAV', x: 350, y: 350, width: 100, height: 40},
+            {id: 'main', label: 'MAIN', x: 450, y: 250, width: 100, height: 40},
+            {id: 'section', label: 'SECTION', x: 450, y: 350, width: 100, height: 40}
+        ]
+    };
+
+    const scenarios = {
+        basic: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic HTML Structure</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to My Website</h1>
+    </header>
+    <main>
+        <p>This is the main content of the page.</p>
+    </main>
+</body>
+</html>`,
+        article: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article Page</title>
+</head>
+<body>
+    <header>
+        <h1>My Blog</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <article>
+            <h2>Article Title</h2>
+            <p>This is the content of the article.</p>
+        </article>
+        <aside>
+            <h3>Related Posts</h3>
+            <ul>
+                <li><a href="#">Another Article</a></li>
+                <li><a href="#">Yet Another Article</a></li>
+            </ul>
+        </aside>
+    </main>
+</body>
+</html>`,
+        portfolio: `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio</title>
+</head>
+<body>
+    <header>
+        <h1>John Doe - Web Developer</h1>
+        <nav>
+            <ul>
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="about">
+            <h2>About Me</h2>
+            <p>I'm a passionate web developer with experience in HTML, CSS, and JavaScript.</p>
+        </section>
+        <section id="projects">
+            <h2>My Projects</h2>
+            <ul>
+                <li>Project 1</li>
+                <li>Project 2</li>
+                <li>Project 3</li>
+            </ul>
+        </section>
+        <section id="contact">
+            <h2>Contact Me</h2>
+            <p>Email: john@example.com</p>
+        </section>
+    </main>
+</body>
+</html>`
+    };
+
+    function drawFlowchart(scenario) {
+        const svg = document.getElementById('flowchart');
+        svg.innerHTML = '<rect width="100%" height="100%" fill="none"></rect>';
+        
+        flowchartData[scenario].forEach(item => {
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', item.x);
+            rect.setAttribute('y', item.y);
+            rect.setAttribute('width', item.width);
+            rect.setAttribute('height', item.height);
+            rect.setAttribute('rx', 5);
+            rect.setAttribute('ry', 5);
+            rect.setAttribute('id', item.id);
+            rect.setAttribute('fill', 'url(#blueGradient)');
+            rect.onclick = () => highlightCode(item.id);
+            
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', item.x + item.width / 2);
+            text.setAttribute('y', item.y + item.height / 2);
+            text.textContent = item.label;
+            
+            svg.appendChild(rect);
+            svg.appendChild(text);
+        });
+        
+        addLine('html', 'head');
+        addLine('html', 'body');
+        addLine('head', 'title');
+        addLine('body', 'header');
+        addLine('body', 'main');
+        
+        if (scenario !== 'basic') {
+            addLine('header', 'nav');
+            addLine('main', 'article');
+            if (scenario === 'article') {
+                addLine('main', 'aside');
+            }
+            if (scenario === 'portfolio') {
+                addLine('main', 'section');
+            }
+        }
+    }
+
+    function addLine(from, to) {
+        const fromElement = document.getElementById(from);
+        const toElement = document.getElementById(to);
+        
+        if (fromElement && toElement) {
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            const fromX = parseInt(fromElement.getAttribute('x')) + parseInt(fromElement.getAttribute('width')) / 2;
+            const fromY = parseInt(fromElement.getAttribute('y')) + parseInt(fromElement.getAttribute('height'));
+            const toX = parseInt(toElement.getAttribute('x')) + parseInt(toElement.getAttribute('width')) / 2;
+            const toY = parseInt(toElement.getAttribute('y'));
+            
+            line.setAttribute('x1', fromX);
+            line.setAttribute('y1', fromY);
+            line.setAttribute('x2', toX);
+            line.setAttribute('y2', toY);
+            
+            document.getElementById('flowchart').appendChild(line);
+        }
+    }
+
+    function updateEditor() {
+        const scenario = document.getElementById('scenario-selector').value;
+        document.getElementById('editor').value = scenarios[scenario];
+        drawFlowchart(scenario);
+    }
+
+    function runCode() {
+        const code = document.getElementById('editor').value;
+        const output = document.getElementById('output');
+        output.srcdoc = code;
+    }
+
+    function highlightCode(elementId) {
+        const editor = document.getElementById('editor');
+        const code = editor.value;
+        const lines = code.split('\n');
+        const elementTag = `<${elementId.toLowerCase()}`;
+        const lineIndex = lines.findIndex(line => line.trim().toLowerCase().startsWith(elementTag));
+        
+        if (lineIndex !== -1) {
+            const startPos = lines.slice(0, lineIndex).join('\n').length + (lineIndex > 0 ? 1 : 0);
+            const endPos = startPos + lines[lineIndex].length;
+            
+            editor.focus();
+            editor.setSelectionRange(startPos, endPos);
+        }
+    }
+
+    function toggleTheme() {
+        const html = document.documentElement;
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeLabel = themeToggle.querySelector('.theme-label');
+        
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.removeAttribute('data-theme');
+            themeLabel.textContent = '🌙';
+            localStorage.setItem('theme', 'light');
+        } else {
+            html.setAttribute('data-theme', 'dark');
+            themeLabel.textContent = '☀️';
+            localStorage.setItem('theme', 'dark');
+        }
+    }
+
+    function initializeTheme() {
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const html = document.documentElement;
+        const themeToggle = document.querySelector('.theme-toggle');
+        const themeLabel = themeToggle.querySelector('.theme-label');
+        
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            themeLabel.textContent = '☀️';
+        } else {
+            html.removeAttribute('data-theme');
+            themeLabel.textContent = '🌙';
+        }
+    }
+
+    document.getElementById('scenario-selector').addEventListener('change', updateEditor);
+    updateEditor();
+    document.addEventListener('DOMContentLoaded', initializeTheme);
+    </script>
+
+</body></html>
